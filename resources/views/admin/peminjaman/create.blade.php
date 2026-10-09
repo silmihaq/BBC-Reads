@@ -1,4 +1,6 @@
-<x-admin-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <x-slot:title>Tambah Transaksi Peminjaman | BBC-Reads Admin</x-slot:title>
 
     <div class="max-w-3xl mx-auto">
@@ -161,4 +163,4 @@
             });
         });
     </script>
-</x-admin-layout>
+@endsection

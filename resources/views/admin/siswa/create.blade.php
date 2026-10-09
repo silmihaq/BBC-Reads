@@ -1,4 +1,6 @@
-<x-admin-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <x-slot:title>Tambah Siswa Baru | BBC-Reads Admin</x-slot:title>
 
     <div class="max-w-3xl mx-auto">
@@ -119,4 +121,4 @@
             </form>
         </div>
     </div>
-</x-admin-layout>
+@endsection

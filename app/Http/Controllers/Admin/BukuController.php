@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Buku;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class BukuController extends Controller
@@ -11,9 +12,18 @@ class BukuController extends Controller
     /**
      * Menampilkan daftar buku.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $bukus = Buku::orderBy('created_at', 'desc')->paginate(10);
+        $query = Buku::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('judul', 'like', "%{$search}%")
+                  ->orWhere('penulis', 'like', "%{$search}%")
+                  ->orWhere('penerbit', 'like', "%{$search}%");
+        }
+
+        $bukus = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin.buku.index', compact('bukus'));
     }
@@ -23,7 +33,9 @@ class BukuController extends Controller
      */
     public function create()
     {
-        return view('admin.buku.create');
+        $kategoris = Kategori::all();
+
+        return view('admin.buku.create', compact('kategoris'));
     }
 
     /**
@@ -32,11 +44,14 @@ class BukuController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'judul'     => 'required|string|max:255',
-            'penulis'   => 'required|string|max:255',
-            'penerbit'  => 'required|string|max:255',
-            'tahun'     => 'required|numeric|digits:4',
-            'stok'      => 'required|integer|min:0',
+            'judul'       => 'required|string|max:255',
+            'penulis'     => 'required|string|max:255',
+            'penerbit'    => 'required|string|max:255',
+            'tahun'       => 'required|numeric|digits:4',
+            'stok'        => 'required|integer|min:0',
+            'kategori_id' => 'nullable',
+            'isbn'        => 'nullable|string',
+            'sinopsis'    => 'nullable|string',
         ], [
             'judul.required'    => 'Judul buku wajib diisi.',
             'penulis.required'  => 'Nama penulis wajib diisi.',
@@ -48,7 +63,25 @@ class BukuController extends Controller
             'stok.integer'      => 'Jumlah stok harus berupa angka.',
         ]);
 
-        Buku::create($validated);
+        $namaKategori = 'Umum';
+        if ($request->filled('kategori_id')) {
+            $kat = Kategori::find($request->kategori_id);
+            if ($kat) {
+                $namaKategori = $kat->nama_kategori;
+            }
+        }
+
+        // HANYA gunakan 'tahun_terbit' (karena kolom di DB adalah tahun_terbit)
+        Buku::create([
+            'judul'        => $validated['judul'],
+            'penulis'      => $validated['penulis'],
+            'penerbit'     => $validated['penerbit'],
+            'tahun_terbit' => $validated['tahun'], 
+            'stok'         => $validated['stok'],
+            'kategori'     => $namaKategori,
+            'isbn'         => $request->isbn,
+            'sinopsis'     => $request->sinopsis,
+        ]);
 
         return redirect()->route('admin.buku.index')->with('success', 'Data buku berhasil ditambahkan.');
     }
@@ -59,8 +92,9 @@ class BukuController extends Controller
     public function edit($id)
     {
         $buku = Buku::findOrFail($id);
+        $kategoris = Kategori::all();
 
-        return view('admin.buku.edit', compact('buku'));
+        return view('admin.buku.edit', compact('buku', 'kategoris'));
     }
 
     /**
@@ -71,11 +105,14 @@ class BukuController extends Controller
         $buku = Buku::findOrFail($id);
 
         $validated = $request->validate([
-            'judul'     => 'required|string|max:255',
-            'penulis'   => 'required|string|max:255',
-            'penerbit'  => 'required|string|max:255',
-            'tahun'     => 'required|numeric|digits:4',
-            'stok'      => 'required|integer|min:0',
+            'judul'       => 'required|string|max:255',
+            'penulis'     => 'required|string|max:255',
+            'penerbit'    => 'required|string|max:255',
+            'tahun'       => 'required|numeric|digits:4',
+            'stok'        => 'required|integer|min:0',
+            'kategori_id' => 'nullable',
+            'isbn'        => 'nullable|string',
+            'sinopsis'    => 'nullable|string',
         ], [
             'judul.required'    => 'Judul buku wajib diisi.',
             'penulis.required'  => 'Nama penulis wajib diisi.',
@@ -84,7 +121,24 @@ class BukuController extends Controller
             'stok.required'     => 'Jumlah stok wajib diisi.',
         ]);
 
-        $buku->update($validated);
+        $namaKategori = $buku->kategori ?? 'Umum';
+        if ($request->filled('kategori_id')) {
+            $kat = Kategori::find($request->kategori_id);
+            if ($kat) {
+                $namaKategori = $kat->nama_kategori;
+            }
+        }
+
+        $buku->update([
+            'judul'        => $validated['judul'],
+            'penulis'      => $validated['penulis'],
+            'penerbit'     => $validated['penerbit'],
+            'tahun_terbit' => $validated['tahun'],
+            'stok'         => $validated['stok'],
+            'kategori'     => $namaKategori,
+            'isbn'         => $request->isbn,
+            'sinopsis'     => $request->sinopsis,
+        ]);
 
         return redirect()->route('admin.buku.index')->with('success', 'Data buku berhasil diperbarui.');
     }

@@ -8,10 +8,15 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\PeminjamanController;
 use App\Http\Controllers\Admin\AuthController;
 
-// Redirect Halaman Utama
+// Halaman Utama Publik (Mendukung panggilan route('home') maupun route('user.home'))
 Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
-});
+    return view('user.home');
+})->name('home');
+
+// Alias Route 'user.home' agar link berbasis route('user.home') tidak error
+Route::get('/home', function () {
+    return view('user.home');
+})->name('user.home');
 
 // Route Authentication Admin (Tanpa Prefix Name Agar Memiliki Route 'login' Default)
 Route::middleware(['guest'])->prefix('admin')->group(function () {

@@ -1,7 +1,6 @@
-<x-admin-layout>
-    <x-slot:title>Tambah Buku Baru | BBC-Reads Admin</x-slot:title>
+@extends('components.admin-layout')
 
-    <!-- Header & Navigation Back -->
+@section('content')
     <div class="mb-8 flex items-center justify-between">
         <div>
             <a href="{{ route('admin.buku.index') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition mb-2">
@@ -54,15 +53,18 @@
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
-                <!-- Kategori Buku -->
+                <!-- Kategori Buku (Dinamis dari Controller) -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori <span class="text-rose-500">*</span></label>
-                    <select name="kategori" required class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-cyan-500 transition">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori</label>
+                    <select name="kategori_id" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-cyan-500 transition">
                         <option value="">-- Pilih Kategori --</option>
-                        <option value="fiksi" {{ old('kategori') == 'fiksi' ? 'selected' : '' }}>Fiksi / Novel</option>
-                        <option value="non-fiksi" {{ old('kategori') == 'non-fiksi' ? 'selected' : '' }}>Non-Fiksi</option>
-                        <option value="pelajaran" {{ old('kategori') == 'pelajaran' ? 'selected' : '' }}>Buku Pelajaran</option>
-                        <option value="referensi" {{ old('kategori') == 'referensi' ? 'selected' : '' }}>Kamus & Referensi</option>
+                        @if(isset($kategoris))
+                            @foreach ($kategoris as $kat)
+                                <option value="{{ $kat->id }}" {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>
+                                    {{ $kat->nama_kategori }}
+                                </option>
+                            @endforeach
+                        @endif
                     </select>
                 </div>
 
@@ -73,17 +75,17 @@
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
-                <!-- Tahun Terbit -->
+                <!-- Tahun Terbit (Diselaraskan name="tahun") -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tahun Terbit</label>
-                    <input type="number" name="tahun_terbit" value="{{ old('tahun_terbit') }}" min="1900" max="{{ date('Y') }}" placeholder="2024" 
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tahun Terbit <span class="text-rose-500">*</span></label>
+                    <input type="number" name="tahun" value="{{ old('tahun') }}" min="1900" max="{{ date('Y') }}" required placeholder="2024" 
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
                 <!-- Jumlah Stok Total -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Stok Buku <span class="text-rose-500">*</span></label>
-                    <input type="number" name="stok" value="{{ old('stok') }}" min="1" required placeholder="0" 
+                    <input type="number" name="stok" value="{{ old('stok') }}" min="0" required placeholder="0" 
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
@@ -122,4 +124,4 @@
             </div>
         </form>
     </div>
-</x-admin-layout>
+@endsection
