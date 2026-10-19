@@ -6,8 +6,8 @@
             <a href="{{ route('admin.buku.index') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition mb-2">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Data Buku
             </a>
-            <h2 class="text-2xl font-bold text-white tracking-wide">Tambah Koleksi Buku</h2>
-            <p class="text-slate-400 text-sm mt-1">Isi formulir di bawah ini untuk menambahkan buku baru ke pustaka</p>
+            <h2 class="text-2xl font-bold text-white tracking-wide">Tambah Buku Baru</h2>
+            <p class="text-slate-400 text-sm mt-1">Tambahkan koleksi buku baru ke dalam katalog perpustakaan</p>
         </div>
     </div>
 
@@ -33,13 +33,13 @@
             <!-- Grid 2 Kolom -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Judul Buku -->
-                <div class="md:col-span-2">
+                <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Judul Buku <span class="text-rose-500">*</span></label>
                     <input type="text" name="judul" value="{{ old('judul') }}" required placeholder="Contoh: Laskar Pelangi" 
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
-                <!-- Penulis / Pengarang -->
+                <!-- Penulis -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Penulis / Pengarang <span class="text-rose-500">*</span></label>
                     <input type="text" name="penulis" value="{{ old('penulis') }}" required placeholder="Contoh: Andrea Hirata" 
@@ -53,63 +53,65 @@
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
-                <!-- Kategori Buku (Dinamis dari Controller) -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori</label>
-                    <select name="kategori_id" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-cyan-500 transition">
-                        <option value="">-- Pilih Kategori --</option>
-                        @if(isset($kategoris))
-                            @foreach ($kategoris as $kat)
-                                <option value="{{ $kat->id }}" {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>
-                                    {{ $kat->nama_kategori }}
-                                </option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-
-                <!-- Nomor ISBN -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Nomor ISBN</label>
-                    <input type="text" name="isbn" value="{{ old('isbn') }}" placeholder="978-xxx-xxx-xxx-x" 
-                        class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
-                </div>
-
-                <!-- Tahun Terbit (Diselaraskan name="tahun") -->
+                <!-- Tahun Terbit -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tahun Terbit <span class="text-rose-500">*</span></label>
-                    <input type="number" name="tahun" value="{{ old('tahun') }}" min="1900" max="{{ date('Y') }}" required placeholder="2024" 
+                    <input type="number" name="tahun" value="{{ old('tahun') }}" required placeholder="Contoh: 2005" 
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
-                <!-- Jumlah Stok Total -->
+                <!-- Stok -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Stok Buku <span class="text-rose-500">*</span></label>
-                    <input type="number" name="stok" value="{{ old('stok') }}" min="0" required placeholder="0" 
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Stok <span class="text-rose-500">*</span></label>
+                    <input type="number" name="stok" value="{{ old('stok', 1) }}" required min="0" placeholder="Contoh: 10" 
                         class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
-                <!-- Upload Sampul Buku -->
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Foto Sampul Buku (Opsional)</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-800 rounded-2xl cursor-pointer bg-slate-900/50 hover:bg-slate-900 transition border-hover">
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-500 mb-2"></i>
-                                <p class="text-xs text-slate-400"><span class="font-semibold text-cyan-400">Klik untuk upload</span> atau drag and drop</p>
-                                <p class="text-[10px] text-slate-500 mt-1">PNG, JPG, JPEG, atau WEBP (Maksimal 2MB)</p>
-                            </div>
-                            <input type="file" name="sampul" class="hidden" accept="image/*" />
-                        </label>
+                <!-- Kategori -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Kategori Buku</label>
+                    <select name="kategori_id" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-cyan-500 transition">
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach ($kategoris as $kat)
+                            <option value="{{ $kat->id }}" {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>
+                                {{ $kat->nama_kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Upload Foto Sampul -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Foto Sampul Buku (Opsional)</label>
+                <div class="relative border-2 border-dashed border-slate-800 rounded-2xl p-6 text-center hover:border-cyan-500/50 transition cursor-pointer bg-slate-900/30 group" id="drop-zone">
+                    <input type="file" name="sampul" id="sampul-input" accept="image/png, image/jpeg, image/jpg, image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    
+                    <!-- Default State Container -->
+                    <div id="upload-placeholder" class="space-y-2">
+                        <div class="w-12 h-12 rounded-xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-center mx-auto text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition">
+                            <i data-lucide="cloud-upload" class="w-6 h-6"></i>
+                        </div>
+                        <div class="text-xs text-slate-300">
+                            <span class="text-cyan-400 font-semibold">Klik untuk upload</span> atau drag and drop
+                        </div>
+                        <p class="text-[11px] text-slate-500">PNG, JPG, JPEG, atau WEBP (Maksimal 2MB)</p>
+                    </div>
+
+                    <!-- Live Preview Container -->
+                    <div id="preview-container" class="hidden flex flex-col items-center justify-center gap-3">
+                        <img id="image-preview" src="#" alt="Preview Sampul" class="max-h-48 rounded-xl object-cover border border-slate-700 shadow-lg">
+                        <p id="file-name" class="text-xs text-cyan-400 font-medium"></p>
+                        <span class="text-[10px] text-slate-500">Klik atau drag gambar baru untuk mengganti</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Ringkasan / Sinopsis -->
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Ringkasan / Sinopsis Buku</label>
-                    <textarea name="sinopsis" rows="4" placeholder="Tuliskan deskripsi singkat isi buku..." 
-                        class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">{{ old('sinopsis') }}</textarea>
-                </div>
+            <!-- Sinopsis -->
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Ringkasan / Sinopsis Buku</label>
+                <textarea name="sinopsis" rows="4" placeholder="Tuliskan ringkasan singkat isi buku..." 
+                    class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">{{ old('sinopsis') }}</textarea>
             </div>
 
             <!-- Action Buttons -->
@@ -124,4 +126,29 @@
             </div>
         </form>
     </div>
+
+    <!-- JavaScript Live Preview Image -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sampulInput = document.getElementById('sampul-input');
+            const uploadPlaceholder = document.getElementById('upload-placeholder');
+            const previewContainer = document.getElementById('preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const fileName = document.getElementById('file-name');
+
+            sampulInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        fileName.textContent = file.name;
+                        uploadPlaceholder.classList.add('hidden');
+                        previewContainer.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
 @endsection

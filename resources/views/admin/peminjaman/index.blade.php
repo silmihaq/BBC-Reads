@@ -21,6 +21,13 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     <!-- Tabel Transaksi Peminjaman -->
     <div class="rounded-2xl bg-slate-950/60 border border-slate-800 overflow-hidden">
         <div class="overflow-x-auto">
@@ -30,32 +37,45 @@
                         <th class="px-6 py-4">No</th>
                         <th class="px-6 py-4">Peminjam (Siswa)</th>
                         <th class="px-6 py-4">Buku yang Dipinjam</th>
-                        <th class="px-6 py-4">Tgl Pinjam / Kembali</th>
+                        <th class="px-6 py-4">Tgl Pinjam / Tenggat</th>
                         <th class="px-6 py-4 text-center">Status</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800/60">
                     @forelse ($peminjamans as $index => $item)
+                        @php
+                            $statusLower = strtolower($item->status);
+                        @endphp
                         <tr class="hover:bg-slate-900/40 transition">
                             <td class="px-6 py-4 text-slate-500 font-mono">
-                                {{ $peminjamans->firstItem() + $index }}
+                                {{ isset($peminjamans) && method_exists($peminjamans, 'firstItem') ? $peminjamans->firstItem() + $index : $index + 1 }}
                             </td>
                             <td class="px-6 py-4">
-                                <p class="font-bold text-white">{{ $item->siswa->nama ?? 'Siswa Terhapus' }}</p>
-                                <p class="text-[10px] text-slate-500">NISN: {{ $item->siswa->nisn ?? '-' }}</p>
+                                <p class="font-bold text-white">{{ $item->nama_peminjam ?? ($item->siswa->nama ?? 'Siswa Terhapus') }}</p>
+                                <p class="text-[10px] text-slate-500 font-mono">NISN: {{ $item->nisn ?? ($item->siswa->nisn ?? '-') }} ({{ $item->kelas ?? '-' }})</p>
                             </td>
-                            <td class="px-6 py-4 font-medium text-cyan-400">
+                            <td class="px-6 py-4 font-semibold text-cyan-400">
                                 {{ $item->buku->judul ?? 'Buku Terhapus' }}
                             </td>
                             <td class="px-6 py-4 text-slate-400 space-y-0.5">
-                                <p><span class="text-slate-500">Pinjam:</span> {{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</p>
-                                <p><span class="text-slate-500">Batas:</span> {{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') }}</p>
+                                <p><span class="text-slate-500">Pinjam:</span> <span class="font-mono text-slate-300">{{ \Carbon\Carbon::parse($item->tgl_pinjam ?? $item->tanggal_pinjam)->format('d M Y') }}</span></p>
+                                <p><span class="text-slate-500">Batas:</span> <span class="font-mono text-cyan-400">{{ \Carbon\Carbon::parse($item->tgl_tenggat ?? $item->tanggal_kembali)->format('d M Y') }}</span></p>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                @if ($item->status === 'dipinjam')
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold uppercase">
-                                        Dipinjam
+                                @if ($statusLower === 'dipinjam')
+                                    @if (\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($item->tgl_tenggat ?? $item->tanggal_kembali)))
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold uppercase">
+                                            Terlambat
+                                        </span>
+                                    @else
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold uppercase">
+                                            Dipinjam
+                                        </span>
+                                    @endif
+                                @elseif ($statusLower === 'hilang')
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold uppercase">
+                                        Hilang
                                     </span>
                                 @else
                                     <span class="px-2.5 py-1 rounded-full text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold uppercase">
@@ -65,10 +85,10 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    @if ($item->status === 'dipinjam')
+                                    @if ($statusLower === 'dipinjam')
+                                        <!-- Form POST Murni tanpa @method('PATCH') -->
                                         <form action="{{ route('admin.peminjaman.kembalikan', $item->id) }}" method="POST" class="inline">
                                             @csrf
-                                            @method('PATCH')
                                             <button type="submit" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 font-semibold text-[11px] transition cursor-pointer" title="Kembalikan Buku">
                                                 Kembalikan
                                             </button>
@@ -90,7 +110,7 @@
             </table>
         </div>
 
-        @if ($peminjamans->hasPages())
+        @if (isset($peminjamans) && method_exists($peminjamans, 'hasPages') && $peminjamans->hasPages())
             <div class="p-4 border-t border-slate-800">
                 {{ $peminjamans->links() }}
             </div>

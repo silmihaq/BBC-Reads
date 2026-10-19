@@ -9,21 +9,21 @@ class Buku extends Model
 {
     use HasFactory;
 
+    protected $table = 'bukus';
+
     protected $fillable = [
         'judul',
         'penulis',
         'penerbit',
-        'tahun',
-        'isbn',
-        'kategori',
+        'tahun_terbit',
+        'kategori_id',
         'stok',
-        'sampul',
-        'sinopsis',
+        'cover',
+        'deskripsi',
     ];
 
-    // Relasi ke Peminjaman
-    public function peminjamans()
+    public function kategori()
     {
-        return $this->hasMany(Peminjaman::class, 'buku_id');
+        return $this->belongsTo(Kategori::class, 'kategori_id');
     }
 }

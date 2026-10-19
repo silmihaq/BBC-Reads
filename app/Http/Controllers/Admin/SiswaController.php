@@ -9,12 +9,21 @@ use Illuminate\Http\Request;
 class SiswaController extends Controller
 {
     /**
-     * Menampilkan daftar anggota / siswa.
+     * Menampilkan daftar data siswa.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $siswas = Siswa::orderBy('created_at', 'desc')->paginate(10);
-        
+        $query = Siswa::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nisn', 'like', "%{$search}%")
+                  ->orWhere('kelas', 'like', "%{$search}%");
+        }
+
+        $siswas = $query->orderBy('created_at', 'desc')->paginate(10);
+
         return view('admin.siswa.index', compact('siswas'));
     }
 
@@ -32,17 +41,17 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nisn'          => 'required|string|max:20|unique:siswas,nisn',
+            'nisn'          => 'required|numeric|unique:siswas,nisn',
             'nama'          => 'required|string|max:255',
             'kelas'         => 'required|string|max:50',
             'jenis_kelamin' => 'required|in:L,P',
         ], [
             'nisn.required'          => 'NISN wajib diisi.',
+            'nisn.numeric'           => 'NISN harus berupa angka.',
             'nisn.unique'            => 'NISN sudah terdaftar.',
             'nama.required'          => 'Nama lengkap wajib diisi.',
             'kelas.required'         => 'Kelas wajib diisi.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
-            'jenis_kelamin.in'       => 'Pilihan jenis kelamin tidak valid.',
         ]);
 
         Siswa::create($validated);
@@ -56,7 +65,7 @@ class SiswaController extends Controller
     public function edit($id)
     {
         $siswa = Siswa::findOrFail($id);
-        
+
         return view('admin.siswa.edit', compact('siswa'));
     }
 
@@ -68,13 +77,14 @@ class SiswaController extends Controller
         $siswa = Siswa::findOrFail($id);
 
         $validated = $request->validate([
-            'nisn'          => 'required|string|max:20|unique:siswas,nisn,' . $siswa->id,
+            'nisn'          => 'required|numeric|unique:siswas,nisn,' . $id,
             'nama'          => 'required|string|max:255',
             'kelas'         => 'required|string|max:50',
             'jenis_kelamin' => 'required|in:L,P',
         ], [
             'nisn.required'          => 'NISN wajib diisi.',
-            'nisn.unique'            => 'NISN sudah terdaftar pada siswa lain.',
+            'nisn.numeric'           => 'NISN harus berupa angka.',
+            'nisn.unique'            => 'NISN sudah digunakan oleh siswa lain.',
             'nama.required'          => 'Nama lengkap wajib diisi.',
             'kelas.required'         => 'Kelas wajib diisi.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
@@ -86,7 +96,7 @@ class SiswaController extends Controller
     }
 
     /**
-     * Menghapus data siswa dari database.
+     * Menghapus data siswa.
      */
     public function destroy($id)
     {

@@ -8,49 +8,39 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    /**
-     * Menampilkan form login admin.
-     */
     public function showLoginForm()
     {
         return view('admin.auth.login');
     }
 
-    /**
-     * Proses autentikasi login.
-     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+            'email'    => 'required|string',
+            'password' => 'required|string',
         ], [
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'password.required' => 'Password wajib diisi.',
+            'email.required'    => 'Email / Username wajib diisi.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials, $request->remember)) {
-            $request->session()->regenerate();
+        $remember = $request->has('remember');
 
-            return redirect()->intended(route('admin.dashboard'));
+        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('admin.peminjaman.index'));
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
+            'email' => 'Kombinasi Email/Username dan Kata Sandi salah.',
         ])->onlyInput('email');
     }
 
-    /**
-     * Proses logout.
-     */
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('admin.login')->with('success', 'Anda telah berhasil keluar dari sistem.');
     }
 }

@@ -28,21 +28,21 @@
             <!-- Menu Navigasi Utama -->
             <nav class="space-y-1.5">
                 <!-- Dashboard -->
-                <a href="{{ route('admin.dashboard') }}" 
+                <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                     <span>Dashboard</span>
                 </a>
 
                 <!-- Data Anggota (Siswa) -->
-                <a href="{{ route('admin.siswa.index') }}" 
+                <a href="{{ Route::has('admin.siswa.index') ? route('admin.siswa.index') : '#' }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.siswa.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
                     <i data-lucide="users" class="w-4 h-4"></i>
                     <span>Data Anggota (Siswa)</span>
                 </a>
 
                 <!-- Data Buku -->
-                <a href="{{ route('admin.buku.index') }}" 
+                <a href="{{ Route::has('admin.buku.index') ? route('admin.buku.index') : '#' }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.buku.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
                     <i data-lucide="book" class="w-4 h-4"></i>
                     <span>Data Buku</span>
@@ -56,7 +56,7 @@
                 </a>
 
                 <!-- Transaksi Peminjaman -->
-                <a href="{{ route('admin.peminjaman.index') }}" 
+                <a href="{{ Route::has('admin.peminjaman.index') ? route('admin.peminjaman.index') : '#' }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.peminjaman.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
                     <i data-lucide="repeat" class="w-4 h-4"></i>
                     <span>Peminjaman Buku</span>
@@ -85,8 +85,18 @@
             </nav>
         </div>
 
-        <!-- Tombol Logout -->
-        <div class="pt-4 border-t border-slate-800/60">
+        <!-- Profil Admin & Tombol Logout -->
+        <div class="pt-4 border-t border-slate-800/60 space-y-3">
+            <div class="px-2 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 font-bold text-xs shrink-0">
+                    A
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name ?? 'Administrator' }}</p>
+                    <p class="text-[10px] text-slate-500 truncate">{{ auth()->user()->email ?? 'admin@bbc.reads' }}</p>
+                </div>
+            </div>
+
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 hover:border hover:border-rose-500/20 transition-all duration-200 cursor-pointer">
@@ -99,7 +109,7 @@
 
     <!-- AREA KONTEN UTAMA -->
     <main class="flex-1 p-6 md:p-8 overflow-y-auto">
-         @yield('content') 
+        @yield('content') 
     </main>
 
     <script>

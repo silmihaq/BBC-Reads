@@ -17,9 +17,6 @@ class Kategori extends Model
         'deskripsi',
     ];
 
-    /**
-     * Relasi ke model Buku (Satu kategori bisa memiliki banyak buku)
-     */
     public function bukus()
     {
         return $this->hasMany(Buku::class, 'kategori_id');

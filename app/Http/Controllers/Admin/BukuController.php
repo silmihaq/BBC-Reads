@@ -6,21 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BukuController extends Controller
 {
-    /**
-     * Menampilkan daftar buku.
-     */
     public function index(Request $request)
     {
-        $query = Buku::query();
+        $query = Buku::with('kategori');
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where('judul', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
                   ->orWhere('penulis', 'like', "%{$search}%")
-                  ->orWhere('penerbit', 'like', "%{$search}%");
+                  ->orWhere('penerbit', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%")
+                  ->orWhereHas('kategori', function ($kat) use ($search) {
+                      $kat->where('nama_kategori', 'like', "%{$search}%");
+                  });
+            });
         }
 
         $bukus = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -28,129 +32,114 @@ class BukuController extends Controller
         return view('admin.buku.index', compact('bukus'));
     }
 
-    /**
-     * Menampilkan form tambah buku.
-     */
     public function create()
     {
-        $kategoris = Kategori::all();
-
+        $kategoris = Kategori::orderBy('nama_kategori', 'asc')->get();
         return view('admin.buku.create', compact('kategoris'));
     }
 
-    /**
-     * Menyimpan data buku baru ke database.
-     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'judul'       => 'required|string|max:255',
-            'penulis'     => 'required|string|max:255',
-            'penerbit'    => 'required|string|max:255',
-            'tahun'       => 'required|numeric|digits:4',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'penulis'     => 'nullable|string|max:255',
+            'penerbit'    => 'nullable|string|max:255',
+            'tahun_terbit'=> 'nullable|numeric',
             'stok'        => 'required|integer|min:0',
-            'kategori_id' => 'nullable',
-            'isbn'        => 'nullable|string',
-            'sinopsis'    => 'nullable|string',
+            'cover'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'deskripsi'   => 'nullable|string',
         ], [
-            'judul.required'    => 'Judul buku wajib diisi.',
-            'penulis.required'  => 'Nama penulis wajib diisi.',
-            'penerbit.required' => 'Nama penerbit wajib diisi.',
-            'tahun.required'    => 'Tahun terbit wajib diisi.',
-            'tahun.numeric'     => 'Tahun terbit harus berupa angka.',
-            'tahun.digits'      => 'Tahun terbit harus 4 digit angka.',
-            'stok.required'     => 'Jumlah stok wajib diisi.',
-            'stok.integer'      => 'Jumlah stok harus berupa angka.',
+            'judul.required'       => 'Judul buku wajib diisi.',
+            'kategori_id.required' => 'Silakan pilih kategori buku.',
+            'kategori_id.exists'   => 'Kategori tidak valid.',
+            'stok.required'        => 'Stok buku wajib diisi.',
+            'stok.integer'         => 'Stok harus berupa angka.',
+            'cover.image'          => 'File cover harus berupa gambar.',
+            'cover.max'            => 'Ukuran gambar maksimal 2MB.',
         ]);
 
-        $namaKategori = 'Umum';
-        if ($request->filled('kategori_id')) {
-            $kat = Kategori::find($request->kategori_id);
-            if ($kat) {
-                $namaKategori = $kat->nama_kategori;
-            }
+        $coverPath = null;
+        if ($request->hasFile('cover')) {
+            $coverPath = $request->file('cover')->store('covers', 'public');
         }
 
-        // HANYA gunakan 'tahun_terbit' (karena kolom di DB adalah tahun_terbit)
         Buku::create([
-            'judul'        => $validated['judul'],
-            'penulis'      => $validated['penulis'],
-            'penerbit'     => $validated['penerbit'],
-            'tahun_terbit' => $validated['tahun'], 
-            'stok'         => $validated['stok'],
-            'kategori'     => $namaKategori,
-            'isbn'         => $request->isbn,
-            'sinopsis'     => $request->sinopsis,
+            'judul'       => $request->judul,
+            'kategori_id' => $request->kategori_id,
+            'penulis'     => $request->penulis,
+            'penerbit'    => $request->penerbit,
+            'tahun_terbit'=> $request->tahun_terbit,
+            'stok'        => $request->stok,
+            'cover'       => $coverPath,
+            'deskripsi'   => $request->deskripsi,
         ]);
 
-        return redirect()->route('admin.buku.index')->with('success', 'Data buku berhasil ditambahkan.');
+        return redirect()->route('admin.buku.index')->with('success', 'Buku berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan form edit buku.
-     */
     public function edit($id)
     {
         $buku = Buku::findOrFail($id);
-        $kategoris = Kategori::all();
-
+        $kategoris = Kategori::orderBy('nama_kategori', 'asc')->get();
         return view('admin.buku.edit', compact('buku', 'kategoris'));
     }
 
-    /**
-     * Memperbarui data buku.
-     */
     public function update(Request $request, $id)
     {
         $buku = Buku::findOrFail($id);
 
-        $validated = $request->validate([
+        $request->validate([
             'judul'       => 'required|string|max:255',
-            'penulis'     => 'required|string|max:255',
-            'penerbit'    => 'required|string|max:255',
-            'tahun'       => 'required|numeric|digits:4',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'penulis'     => 'nullable|string|max:255',
+            'penerbit'    => 'nullable|string|max:255',
+            'tahun_terbit'=> 'nullable|numeric',
             'stok'        => 'required|integer|min:0',
-            'kategori_id' => 'nullable',
-            'isbn'        => 'nullable|string',
-            'sinopsis'    => 'nullable|string',
+            'cover'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'deskripsi'   => 'nullable|string',
         ], [
-            'judul.required'    => 'Judul buku wajib diisi.',
-            'penulis.required'  => 'Nama penulis wajib diisi.',
-            'penerbit.required' => 'Nama penerbit wajib diisi.',
-            'tahun.required'    => 'Tahun terbit wajib diisi.',
-            'stok.required'     => 'Jumlah stok wajib diisi.',
+            'judul.required'       => 'Judul buku wajib diisi.',
+            'kategori_id.required' => 'Silakan pilih kategori buku.',
+            'kategori_id.exists'   => 'Kategori tidak valid.',
+            'stok.required'        => 'Stok buku wajib diisi.',
+            'stok.integer'         => 'Stok harus berupa angka.',
+            'cover.image'          => 'File cover harus berupa gambar.',
+            'cover.max'            => 'Ukuran gambar maksimal 2MB.',
         ]);
 
-        $namaKategori = $buku->kategori ?? 'Umum';
-        if ($request->filled('kategori_id')) {
-            $kat = Kategori::find($request->kategori_id);
-            if ($kat) {
-                $namaKategori = $kat->nama_kategori;
+        $coverPath = $buku->cover;
+        if ($request->hasFile('cover')) {
+            if ($buku->cover && Storage::disk('public')->exists($buku->cover)) {
+                Storage::disk('public')->delete($buku->cover);
             }
+            $coverPath = $request->file('cover')->store('covers', 'public');
         }
 
         $buku->update([
-            'judul'        => $validated['judul'],
-            'penulis'      => $validated['penulis'],
-            'penerbit'     => $validated['penerbit'],
-            'tahun_terbit' => $validated['tahun'],
-            'stok'         => $validated['stok'],
-            'kategori'     => $namaKategori,
-            'isbn'         => $request->isbn,
-            'sinopsis'     => $request->sinopsis,
+            'judul'       => $request->judul,
+            'kategori_id' => $request->kategori_id,
+            'penulis'     => $request->penulis,
+            'penerbit'    => $request->penerbit,
+            'tahun_terbit'=> $request->tahun_terbit,
+            'stok'        => $request->stok,
+            'cover'       => $coverPath,
+            'deskripsi'   => $request->deskripsi,
         ]);
 
         return redirect()->route('admin.buku.index')->with('success', 'Data buku berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus data buku.
-     */
     public function destroy($id)
     {
         $buku = Buku::findOrFail($id);
+
+        if ($buku->cover && Storage::disk('public')->exists($buku->cover)) {
+            Storage::disk('public')->delete($buku->cover);
+        }
+
         $buku->delete();
 
-        return redirect()->route('admin.buku.index')->with('success', 'Data buku berhasil dihapus.');
+        return redirect()->route('admin.buku.index')->with('success', 'Buku berhasil dihapus.');
     }
 }

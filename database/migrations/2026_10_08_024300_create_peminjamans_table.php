@@ -11,15 +11,16 @@ return new class extends Migration
         Schema::create('peminjamans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('buku_id')->constrained('bukus')->onDelete('cascade');
-            $table->string('kode_transaksi')->unique();
+            $table->string('kode_transaksi');
             $table->string('nama_peminjam');
             $table->string('nisn')->nullable();
             $table->string('kelas');
             $table->date('tgl_pinjam');
             $table->date('tgl_tenggat');
             $table->date('tgl_kembali')->nullable();
-            $table->enum('status', ['dipinjam', 'dikembalikan', 'terlambat'])->default('dipinjam');
+            $table->string('status')->default('dipinjam'); // dipinjam, dikembalikan, hilang
             $table->decimal('denda', 10, 2)->default(0);
+            $table->string('denda_keterangan')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
         });

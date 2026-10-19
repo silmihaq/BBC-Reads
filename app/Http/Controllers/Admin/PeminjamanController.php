@@ -12,13 +12,51 @@ use Carbon\Carbon;
 class PeminjamanController extends Controller
 {
     /**
-     * Menampilkan daftar transaksi peminjaman.
+     * Menampilkan daftar transaksi peminjaman aktif.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $peminjamans = Peminjaman::with('buku')->orderBy('created_at', 'desc')->paginate(10);
+        $query = Peminjaman::with('buku');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_peminjam', 'like', "%{$search}%")
+                  ->orWhere('nisn', 'like', "%{$search}%")
+                  ->orWhere('kode_transaksi', 'like', "%{$search}%")
+                  ->orWhereHas('buku', function ($bukuQuery) use ($search) {
+                      $bukuQuery->where('judul', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $peminjamans = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin.peminjaman.index', compact('peminjamans'));
+    }
+
+    /**
+     * Menampilkan halaman Pengembalian & Denda.
+     */
+    public function pengembalianIndex(Request $request)
+    {
+        $query = Peminjaman::with('buku');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_peminjam', 'like', "%{$search}%")
+                  ->orWhere('nisn', 'like', "%{$search}%")
+                  ->orWhere('kode_transaksi', 'like', "%{$search}%")
+                  ->orWhereHas('buku', function ($bukuQuery) use ($search) {
+                      $bukuQuery->where('judul', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $pengembalians = $query->orderBy('updated_at', 'desc')->paginate(10);
+
+        return view('admin.pengembalian.index', compact('pengembalians'));
     }
 
     /**
@@ -76,35 +114,65 @@ class PeminjamanController extends Controller
     }
 
     /**
-     * Memproses pengembalian buku.
+     * Memproses pengembalian buku secara normal.
      */
     public function kembalikan($id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if ($peminjaman->status === 'dikembalikan') {
+        if (strtolower($peminjaman->status) === 'dikembalikan') {
             return redirect()->back()->with('error', 'Buku ini sudah dikembalikan.');
         }
 
         $now = Carbon::now();
-        $tenggat = Carbon::parse($peminjaman->tgl_tenggat);
-        $denda = 0;
-
-        if ($now->greaterThan($tenggat)) {
-            $hariTerlambat = $now->diffInDays($tenggat);
-            $denda = $hariTerlambat * 1000;
-        }
 
         $peminjaman->update([
             'status'      => 'dikembalikan',
             'tgl_kembali' => $now->toDateString(),
-            'denda'       => $denda,
+            'denda'       => 0,
         ]);
 
         if ($peminjaman->buku) {
             $peminjaman->buku->increment('stok');
         }
 
-        return redirect()->route('admin.peminjaman.index')->with('success', 'Buku berhasil dikembalikan.');
+        return redirect()->back()->with('success', 'Buku berhasil dikembalikan.');
+    }
+
+    /**
+     * Memproses laporan buku hilang (Denda otomatis: Wajib Ganti Buku).
+     */
+    public function laporkanHilang($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        $peminjaman->update([
+            'status'           => 'hilang',
+            'denda_keterangan' => 'Wajib Ganti Buku',
+        ]);
+
+        return redirect()->back()->with('success', 'Status diubah menjadi Buku Hilang. Denda otomatis diset ke "Wajib Ganti Buku".');
+    }
+
+    /**
+     * Memproses penyelesaian denda ganti buku (Status denda menjadi Sudah Diganti).
+     */
+    public function gantiBuku($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        $now = Carbon::now();
+
+        $peminjaman->update([
+            'status'           => 'dikembalikan',
+            'tgl_kembali'      => $now->toDateString(),
+            'denda_keterangan' => 'Sudah Diganti',
+        ]);
+
+        if ($peminjaman->buku) {
+            $peminjaman->buku->increment('stok');
+        }
+
+        return redirect()->back()->with('success', 'Buku pengganti telah diterima. Status denda kini "Sudah Diganti".');
     }
 }

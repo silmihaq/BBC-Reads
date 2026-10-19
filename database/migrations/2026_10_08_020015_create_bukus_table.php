@@ -6,29 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('bukus', function (Blueprint $table) {
-                $table->id();
-                $table->string('judul');
-                $table->string('penulis');
-                $table->string('penerbit');
-                $table->string('kategori');
-                $table->string('isbn')->nullable();
-                $table->integer('tahun_terbit')->nullable();
-                $table->integer('stok');
-                $table->string('sampul')->nullable();
-                $table->text('sinopsis')->nullable();
-                $table->timestamps();
+            $table->id();
+            $table->string('judul');
+            $table->string('penulis')->nullable();
+            $table->string('penerbit')->nullable();
+            $table->integer('tahun_terbit')->nullable();
+            
+            // Kolom Foreign Key ke tabel kategoris
+            $table->foreignId('kategori_id')->nullable()->constrained('kategoris')->onDelete('cascade');
+            
+            $table->integer('stok')->default(0);
+            $table->string('cover')->nullable();
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('bukus');

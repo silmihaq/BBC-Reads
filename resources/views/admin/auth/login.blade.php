@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin | BBC-Reads</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4">
@@ -22,6 +22,14 @@
         <!-- Form Card -->
         <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
             <h2 class="text-lg font-bold text-white mb-6 border-b border-slate-800/80 pb-3">Masuk ke Panel Admin</h2>
+
+            <!-- Session Alert Notification -->
+            @if (session('success'))
+                <div class="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
 
             <!-- Session Alert Error -->
             @if ($errors->any())
@@ -54,7 +62,6 @@
                             value="{{ old('email') }}"
                             required 
                             autofocus
-                            autocomplete="new-password"
                             placeholder="Masukkan Email"
                             class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition"
                         >
@@ -75,7 +82,6 @@
                             name="password" 
                             id="password" 
                             required 
-                            autocomplete="new-password"
                             placeholder="••••••••"
                             class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition"
                         >
