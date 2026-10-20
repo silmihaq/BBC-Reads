@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'BBC-Reads Admin' }}</title>
     
-    <!-- Tailwind CSS v4 & Lucide Icons -->
+    <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -27,6 +27,8 @@
 
             <!-- Menu Navigasi Utama -->
             <nav class="space-y-1.5">
+                <span class="px-3 text-[10px] text-slate-500 uppercase tracking-wider block mb-2 font-bold">Menu Utama</span>
+
                 <!-- Dashboard -->
                 <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
@@ -55,6 +57,8 @@
                     <span>Kategori Buku</span>
                 </a>
 
+                <span class="px-3 text-[10px] text-slate-500 uppercase tracking-wider block mt-4 mb-2 font-bold">Transaksi & Laporan</span>
+
                 <!-- Transaksi Peminjaman -->
                 <a href="{{ Route::has('admin.peminjaman.index') ? route('admin.peminjaman.index') : '#' }}" 
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.peminjaman.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
@@ -76,11 +80,20 @@
                     <span>Laporan</span>
                 </a>
 
-                <!-- Pengaturan -->
-                <a href="{{ Route::has('admin.pengaturan.index') ? route('admin.pengaturan.index') : '#' }}" 
-                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.pengaturan.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
+                <span class="px-3 text-[10px] text-slate-500 uppercase tracking-wider block mt-4 mb-2 font-bold">Sistem</span>
+
+                <!-- Pengaturan System -->
+                <a href="{{ Route::has('admin.setting.index') ? route('admin.setting.index') : '#' }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.setting.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
                     <i data-lucide="settings" class="w-4 h-4"></i>
                     <span>Pengaturan</span>
+                </a>
+
+                <!-- Saran & Masukan User -->
+                <a href="{{ Route::has('admin.saran.index') ? route('admin.saran.index') : '#' }}" 
+                   class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('admin.saran.*') ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200' }}">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span>Saran & Masukan</span>
                 </a>
             </nav>
         </div>
@@ -97,7 +110,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('admin.logout') }}" method="POST">
+            <form action="{{ Route::has('admin.logout') ? route('admin.logout') : '#' }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 hover:border hover:border-rose-500/20 transition-all duration-200 cursor-pointer">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
