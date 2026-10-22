@@ -31,7 +31,6 @@ class Peminjaman extends Model
         'tgl_kembali' => 'date',
     ];
 
-    // Relasi ke Model Buku
     public function buku()
     {
         return $this->belongsTo(Buku::class, 'buku_id');

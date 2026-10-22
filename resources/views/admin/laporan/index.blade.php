@@ -17,7 +17,7 @@
 
     <!-- Form Filter Tanggal -->
     <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-md">
-        <form action="{{ route('admin.laporan.pdf') }}" method="POST" target="_blank" class="space-y-6">
+        <form action="{{ route('admin.laporan.pdf') }}" method="POST" class="space-y-6">
             @csrf
 
             @if ($errors->any())
@@ -34,7 +34,7 @@
                     <label for="tgl_mulai" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                         Dari Tanggal
                     </label>
-                    <input type="date" id="tgl_mulai" name="tgl_mulai" value="{{ date('Y-m-01') }}" required
+                    <input type="date" id="tgl_mulai" name="tgl_mulai" value="{{ old('tgl_mulai', date('Y-m-01')) }}" required
                         class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 transition">
                 </div>
 
@@ -43,13 +43,13 @@
                     <label for="tgl_selesai" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                         Sampai Tanggal
                     </label>
-                    <input type="date" id="tgl_selesai" name="tgl_selesai" value="{{ date('Y-m-d') }}" required
+                    <input type="date" id="tgl_selesai" name="tgl_selesai" value="{{ old('tgl_selesai', date('Y-m-d')) }}" required
                         class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 transition">
                 </div>
             </div>
 
             <div class="pt-4 border-t border-slate-800 flex justify-end">
-                <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center gap-2">
+                <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 transition flex items-center gap-2 cursor-pointer">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     Download PDF Laporan
                 </button>
