@@ -17,7 +17,9 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SaranController;
 use App\Http\Controllers\Admin\PustakawanController;
 
+// ==========================================
 // PUBLIC / USER ROUTES
+// ==========================================
 Route::get('/', function (Request $request) {
     $query = Buku::query();
 
@@ -65,20 +67,27 @@ Route::get('/buku/{id}', function ($id) {
     return response()->json($buku);
 })->name('user.buku.detail');
 
-// ADMIN PANEL ROUTES
+// ==========================================
+// ADMIN AUTHENTICATION ROUTES
+// ==========================================
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
+// ==========================================
+// ADMIN PANEL PROTECTED ROUTES
+// ==========================================
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 
+    // Data Master
     Route::resource('buku', BukuController::class);
     Route::resource('kategori', KategoriController::class);
     Route::resource('siswa', SiswaController::class);
 
+    // Transaksi Peminjaman & Pengembalian
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
@@ -88,10 +97,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::post('/peminjaman/{id}/hilang', [PeminjamanController::class, 'laporkanHilang'])->name('peminjaman.hilang');
     Route::post('/peminjaman/{id}/ganti-buku', [PeminjamanController::class, 'gantiBuku'])->name('peminjaman.ganti-buku');
 
+    // Modul Laporan PDF
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::post('/laporan/pdf', [LaporanController::class, 'downloadPdf'])->name('laporan.pdf');
 
-    // Pengaturan & Pustakawan
+    // Modul Pengaturan System & Tim Pustakawan
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
     Route::post('/setting', [SettingController::class, 'update'])->name('setting.update');
     Route::post('/setting/password', [SettingController::class, 'updatePassword'])->name('setting.password');
@@ -99,6 +109,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::post('/pustakawan', [PustakawanController::class, 'store'])->name('pustakawan.store');
     Route::delete('/pustakawan/{id}', [PustakawanController::class, 'destroy'])->name('pustakawan.destroy');
 
+    // Modul Saran & Masukan
     Route::get('/saran', [SaranController::class, 'index'])->name('saran.index');
     Route::delete('/saran/{id}', [SaranController::class, 'destroy'])->name('saran.destroy');
 });
