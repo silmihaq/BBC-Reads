@@ -4,49 +4,52 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- Header -->
+    <div class="bg-white border border-blue-100 p-6 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-white tracking-tight">Saran & Masukan User</h1>
-            <p class="text-xs text-slate-400 mt-1">Daftar umpan balik dan masukan dari siswa/pengunjung perpustakaan digital.</p>
+            <h1 class="text-2xl font-black text-blue-900 tracking-tight">Saran & Masukan User</h1>
+            <p class="text-xs text-gray-500 mt-1">Daftar umpan balik dan masukan dari siswa/pengunjung perpustakaan digital.</p>
         </div>
-        <div class="p-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-xl w-fit">
+        <div class="p-3 bg-blue-50 text-blue-600 border border-blue-100 rounded-xl w-fit">
             <i data-lucide="message-square" class="w-6 h-6"></i>
         </div>
     </div>
 
+    <!-- Alert Notifications -->
     @if (session('success'))
-        <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-xs font-bold flex items-center gap-2">
+        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-bold flex items-center gap-2 shadow-sm">
             <i data-lucide="check-circle" class="w-4 h-4"></i>
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+    <!-- Tabel Umpan Balik -->
+    <div class="bg-white border border-blue-100 rounded-2xl shadow-xl shadow-blue-900/5 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-300">
-                <thead class="text-[10px] uppercase bg-slate-950/80 text-slate-400 border-b border-slate-800">
+            <table class="w-full text-left text-xs text-gray-700">
+                <thead class="bg-blue-600 text-white uppercase tracking-wider border-b border-blue-700">
                     <tr>
-                        <th class="py-3 px-4 rounded-l-lg" width="5%">No</th>
-                        <th class="py-3 px-4" width="20%">Nama Pengirim</th>
-                        <th class="py-3 px-4" width="20%">Email / NISN</th>
-                        <th class="py-3 px-4" width="40%">Pesan / Masukan</th>
-                        <th class="py-3 px-4" width="10%">Tanggal</th>
-                        <th class="py-3 px-4 text-center rounded-r-lg" width="5%">Aksi</th>
+                        <th class="py-4 px-6 font-semibold" width="5%">No</th>
+                        <th class="py-4 px-6 font-semibold" width="20%">Nama Pengirim</th>
+                        <th class="py-4 px-6 font-semibold" width="20%">Email / NISN</th>
+                        <th class="py-4 px-6 font-semibold" width="40%">Pesan / Masukan</th>
+                        <th class="py-4 px-6 font-semibold" width="10%">Tanggal</th>
+                        <th class="py-4 px-6 font-semibold text-center" width="5%">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/60">
+                <tbody class="divide-y divide-blue-50">
                     @forelse ($sarans as $index => $saran)
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="py-3.5 px-4 font-bold text-slate-400">{{ $sarans->firstItem() + $index }}</td>
-                            <td class="py-3.5 px-4 font-bold text-white">{{ $saran->nama }}</td>
-                            <td class="py-3.5 px-4 text-slate-400">{{ $saran->email_or_nisn ?? '-' }}</td>
-                            <td class="py-3.5 px-4 text-slate-300 leading-relaxed">{{ $saran->pesan }}</td>
-                            <td class="py-3.5 px-4 text-slate-400">{{ $saran->created_at->format('d/m/Y H:i') }}</td>
-                            <td class="py-3.5 px-4 text-center">
+                        <tr class="hover:bg-blue-50/50 transition">
+                            <td class="py-4 px-6 text-gray-400 font-mono">{{ $sarans->firstItem() + $index }}</td>
+                            <td class="py-4 px-6 font-bold text-blue-900">{{ $saran->nama }}</td>
+                            <td class="py-4 px-6 text-gray-500 font-mono">{{ $saran->email_or_nisn ?? '-' }}</td>
+                            <td class="py-4 px-6 text-gray-700 leading-relaxed">{{ $saran->pesan }}</td>
+                            <td class="py-4 px-6 text-gray-500 font-mono">{{ $saran->created_at->format('d/m/Y H:i') }}</td>
+                            <td class="py-4 px-6 text-center">
                                 <form action="{{ route('admin.saran.destroy', $saran->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus saran ini?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg transition" title="Hapus">
+                                    <button type="submit" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition cursor-pointer" title="Hapus">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </form>
@@ -54,7 +57,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-8 text-center text-slate-500">
+                            <td colspan="6" class="py-8 text-center text-gray-500 bg-white">
                                 Belum ada saran atau masukan dari pengunjung.
                             </td>
                         </tr>
@@ -63,8 +66,9 @@
             </table>
         </div>
 
+        <!-- Pagination -->
         @if ($sarans->hasPages())
-            <div class="pt-4 border-t border-slate-800 mt-4">
+            <div class="p-4 border-t border-blue-50 bg-gray-50/50">
                 {{ $sarans->links() }}
             </div>
         @endif

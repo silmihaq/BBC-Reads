@@ -5,14 +5,14 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header Dashboard -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-blue-100 p-6 rounded-2xl shadow-sm">
         <div>
-            <h1 class="text-2xl font-black text-white tracking-tight">Dashboard Ringkasan</h1>
-            <p class="text-xs text-slate-400 mt-1">Pantau statistik & tren transaksi perpustakaan digital BBC-Reads.</p>
+            <h1 class="text-2xl font-black text-blue-950 tracking-tight">Dashboard Ringkasan</h1>
+            <p class="text-xs text-slate-500 mt-1">Pantau statistik & tren transaksi perpustakaan digital BBC-Reads.</p>
         </div>
         <div class="flex items-center gap-2">
-            <span class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                 Sistem Aktif
             </span>
         </div>
@@ -21,46 +21,46 @@
     <!-- Section 1: Ringkasan Kartu Statistik (4-Grid Compact) -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Card 1: Total Siswa -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:border-cyan-500/40 transition shadow-md">
-            <div class="p-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-xl">
+        <div class="bg-white border border-blue-100 rounded-2xl p-4 flex items-center gap-4 hover:border-blue-300 transition shadow-sm hover:shadow-md">
+            <div class="p-3 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl">
                 <i data-lucide="users" class="w-5 h-5"></i>
             </div>
             <div>
-                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Total Siswa</span>
-                <strong class="text-xl font-bold text-white leading-tight block mt-0.5">{{ number_format($totalSiswa ?? 0) }}</strong>
+                <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">Total Siswa</span>
+                <strong class="text-xl font-bold text-blue-950 leading-tight block mt-0.5">{{ number_format($totalSiswa ?? 0) }}</strong>
             </div>
         </div>
 
         <!-- Card 2: Koleksi Buku -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:border-cyan-500/40 transition shadow-md">
-            <div class="p-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
+        <div class="bg-white border border-blue-100 rounded-2xl p-4 flex items-center gap-4 hover:border-blue-300 transition shadow-sm hover:shadow-md">
+            <div class="p-3 bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-xl">
                 <i data-lucide="book-open" class="w-5 h-5"></i>
             </div>
             <div>
-                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Koleksi Buku</span>
-                <strong class="text-xl font-bold text-white leading-tight block mt-0.5">{{ number_format($totalBuku ?? 0) }}</strong>
+                <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">Koleksi Buku</span>
+                <strong class="text-xl font-bold text-blue-950 leading-tight block mt-0.5">{{ number_format($totalBuku ?? 0) }}</strong>
             </div>
         </div>
 
         <!-- Card 3: Sedang Dipinjam -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:border-amber-500/40 transition shadow-md">
-            <div class="p-3 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-xl">
+        <div class="bg-white border border-blue-100 rounded-2xl p-4 flex items-center gap-4 hover:border-amber-300 transition shadow-sm hover:shadow-md">
+            <div class="p-3 bg-amber-50 text-amber-600 border border-amber-200 rounded-xl">
                 <i data-lucide="bookmark" class="w-5 h-5"></i>
             </div>
             <div>
-                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Sedang Dipinjam</span>
-                <strong class="text-xl font-bold text-amber-400 leading-tight block mt-0.5">{{ number_format($totalDipinjam ?? 0) }}</strong>
+                <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">Sedang Dipinjam</span>
+                <strong class="text-xl font-bold text-amber-600 leading-tight block mt-0.5">{{ number_format($totalDipinjam ?? 0) }}</strong>
             </div>
         </div>
 
         <!-- Card 4: Selesai / Kembali -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:border-emerald-500/40 transition shadow-md">
-            <div class="p-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl">
+        <div class="bg-white border border-blue-100 rounded-2xl p-4 flex items-center gap-4 hover:border-emerald-300 transition shadow-sm hover:shadow-md">
+            <div class="p-3 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-xl">
                 <i data-lucide="check-circle-2" class="w-5 h-5"></i>
             </div>
             <div>
-                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">Peminjaman Selesai</span>
-                <strong class="text-xl font-bold text-emerald-400 leading-tight block mt-0.5">{{ number_format($totalSelesai ?? 0) }}</strong>
+                <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">Peminjaman Selesai</span>
+                <strong class="text-xl font-bold text-emerald-600 leading-tight block mt-0.5">{{ number_format($totalSelesai ?? 0) }}</strong>
             </div>
         </div>
     </div>
@@ -69,14 +69,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Grafik Tren Bulanan (Compact Container) -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md flex flex-col justify-between">
+        <div class="bg-white border border-blue-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h2 class="text-sm font-bold text-white">Tren Peminjaman</h2>
-                        <p class="text-[11px] text-slate-400">Jumlah aktivitas per bulan ({{ date('Y') }})</p>
+                        <h2 class="text-sm font-bold text-blue-950">Tren Peminjaman</h2>
+                        <p class="text-[11px] text-slate-500">Jumlah aktivitas per bulan ({{ date('Y') }})</p>
                     </div>
-                    <div class="p-2 bg-slate-800 rounded-lg text-cyan-400">
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600 border border-blue-100">
                         <i data-lucide="trending-up" class="w-4 h-4"></i>
                     </div>
                 </div>
@@ -87,30 +87,30 @@
                 </div>
             </div>
 
-            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 mt-2">
+            <div class="pt-3 border-t border-blue-100 flex items-center justify-between text-xs text-slate-500 mt-2">
                 <span>Total Tahun Ini</span>
-                <strong class="text-white font-bold">{{ array_sum($grafikData ?? []) }} Transaksi</strong>
+                <strong class="text-blue-950 font-bold">{{ array_sum($grafikData ?? []) }} Transaksi</strong>
             </div>
         </div>
 
         <!-- Tabel Peminjaman Terbaru -->
-        <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md flex flex-col justify-between">
+        <div class="lg:col-span-2 bg-white border border-blue-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h2 class="text-sm font-bold text-white">Aktivitas Peminjaman Terbaru</h2>
-                        <p class="text-[11px] text-slate-400">5 riwayat transaksi peminjaman buku terakhir</p>
+                        <h2 class="text-sm font-bold text-blue-950">Aktivitas Peminjaman Terbaru</h2>
+                        <p class="text-[11px] text-slate-500">5 riwayat transaksi peminjaman buku terakhir</p>
                     </div>
                     @if (\Illuminate\Support\Facades\Route::has('admin.peminjaman.index'))
-                        <a href="{{ route('admin.peminjaman.index') }}" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1">
+                        <a href="{{ route('admin.peminjaman.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition flex items-center gap-1">
                             Lihat Semua <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </a>
                     @endif
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="text-[10px] uppercase bg-slate-950/80 text-slate-400 border-b border-slate-800">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="text-[10px] uppercase bg-slate-50 text-slate-500 border-b border-blue-100">
                             <tr>
                                 <th class="py-2.5 px-3 rounded-l-lg">Peminjam</th>
                                 <th class="py-2.5 px-3">Buku</th>
@@ -118,25 +118,25 @@
                                 <th class="py-2.5 px-3 text-center rounded-r-lg">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/60">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse ($peminjamanTerbaru ?? [] as $p)
-                                <tr class="hover:bg-slate-800/40 transition">
-                                    <td class="py-3 px-3 font-semibold text-white">
+                                <tr class="hover:bg-blue-50/50 transition">
+                                    <td class="py-3 px-3 font-semibold text-blue-950">
                                         {{ $p->siswa->nama ?? $p->anggota->nama ?? $p->user->name ?? 'Siswa' }}
                                     </td>
-                                    <td class="py-3 px-3 text-slate-300 max-w-[150px] truncate">
+                                    <td class="py-3 px-3 max-w-[150px] truncate">
                                         {{ $p->buku->judul ?? '-' }}
                                     </td>
-                                    <td class="py-3 px-3 text-slate-400">
+                                    <td class="py-3 px-3">
                                         {{ $p->tanggal_pinjam ?? ($p->created_at ? $p->created_at->format('d/m/Y') : '-') }}
                                     </td>
                                     <td class="py-3 px-3 text-center">
                                         @if (($p->status ?? '') == 'dipinjam')
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                                                 Dipinjam
                                             </span>
                                         @else
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 Selesai
                                             </span>
                                         @endif
@@ -144,7 +144,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-8 text-center text-slate-500">
+                                    <td colspan="4" class="py-8 text-center text-slate-400">
                                         Belum ada aktivitas peminjaman buku.
                                     </td>
                                 </tr>
@@ -175,11 +175,11 @@
                 datasets: [{
                     label: 'Peminjaman',
                     data: dataValues,
-                    backgroundColor: 'rgba(6, 182, 212, 0.4)',
-                    borderColor: '#06b6d4',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)', // Biru muda transparan
+                    borderColor: '#3b82f6', // Biru solid
                     borderWidth: 1.5,
                     borderRadius: 4,
-                    hoverBackgroundColor: '#06b6d4'
+                    hoverBackgroundColor: '#2563eb' // Biru lebih gelap saat dihover
                 }]
             },
             options: {
@@ -188,10 +188,10 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#0f172a',
-                        titleColor: '#f8fafc',
-                        bodyColor: '#38bdf8',
-                        borderColor: '#1e293b',
+                        backgroundColor: '#ffffff',
+                        titleColor: '#1e3a8a',
+                        bodyColor: '#3b82f6',
+                        borderColor: '#bfdbfe',
                         borderWidth: 1,
                         padding: 8,
                         displayColors: false
@@ -204,7 +204,7 @@
                     },
                     y: {
                         beginAtZero: true,
-                        grid: { color: 'rgba(30, 41, 59, 0.5)' },
+                        grid: { color: 'rgba(226, 232, 240, 0.8)' }, // Grid abu-abu sangat muda
                         ticks: { color: '#64748b', font: { size: 10 }, stepSize: 1 }
                     }
                 }

@@ -87,7 +87,7 @@ class AuthController extends Controller
         if (class_exists(Peminjaman::class)) {
             $tahunIni = date('Y');
             $peminjamanPerBulan = Peminjaman::select(
-                DB::raw('strftime("%m", created_at) as bulan'),
+                DB::raw('DATE_FORMAT(created_at, "%m") as bulan'),
                 DB::raw('count(*) as total')
             )
             ->whereYear('created_at', $tahunIni)
